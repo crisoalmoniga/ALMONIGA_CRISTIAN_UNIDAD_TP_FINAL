@@ -12,6 +12,10 @@ public class RaceManager : MonoBehaviour
     [Header("Configuración de carrera")]
     [SerializeField] private int totalLaps = 3;
 
+    public int CurrentLap => currentLap;
+    public int TotalLaps => totalLaps;
+    public bool RaceFinished => currentLap > totalLaps;
+
     private int currentCheckpointIndex = 0;
     private int currentLap = 1;
 

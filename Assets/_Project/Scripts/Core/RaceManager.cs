@@ -1,70 +1,103 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 public class RaceManager : MonoBehaviour
 {
-    [Header("Checkpoints (en orden)")]
-    [SerializeField] private List<Transform> checkpoints = new List<Transform>();
-
-    [Header("Referencia al jugador")]
-    [SerializeField] private Transform player;
-
-    [Header("Configuración de carrera")]
+    [Header("Race Settings")]
     [SerializeField] private int totalLaps = 3;
+    [SerializeField] private int totalCheckpoints = 1; // poné la cantidad real de checkpoints (sin contar la meta)
+    [SerializeField] private bool requireAllCheckpointsBeforeFinish = true;
 
+    [Header("Debug")]
+    [SerializeField] private bool debugLogs = true;
+
+    private int currentLap = 1;
+    private int nextCheckpointIndex = 0; // el próximo checkpoint que se espera
+    private bool raceFinished = false;
+
+    private float raceTime = 0f;
+
+    // Expuestos para HUD
     public int CurrentLap => currentLap;
     public int TotalLaps => totalLaps;
-    public bool RaceFinished => currentLap > totalLaps;
+    public bool RaceFinished => raceFinished;
+    public float RaceTime => raceTime;
 
-    private int currentCheckpointIndex = 0;
-    private int currentLap = 1;
-
-    void Start()
+    private void Start()
     {
-        if (checkpoints.Count == 0)
-        {
-            Debug.LogWarning("[RaceManager] No hay checkpoints asignados.");
-        }
-
-        Debug.Log($"[RaceManager] Carrera iniciada. Vueltas totales: {totalLaps}");
+        StartRace();
     }
 
-    public void OnPlayerHitCheckpoint(Transform checkpoint)
+    private void Update()
     {
-        if (checkpoints.Count == 0) return;
+        if (!raceFinished)
+            raceTime += Time.deltaTime;
+    }
 
-        if (checkpoint == checkpoints[currentCheckpointIndex])
+    public void StartRace()
+    {
+        raceFinished = false;
+        raceTime = 0f;
+
+        currentLap = 1;
+        nextCheckpointIndex = 0;
+
+        if (debugLogs)
+            Debug.Log($"[RaceManager] Carrera iniciada. Vueltas totales: {totalLaps}");
+    }
+
+    // --- Estos 2 métodos son los que te están faltando según tu error ---
+
+    // Llamalo desde el trigger de checkpoint, pasando el índice del checkpoint (0..N-1)
+    public void OnPlayerHitCheckpoint(int checkpointIndex)
+    {
+        if (raceFinished) return;
+
+        // Solo acepta el checkpoint esperado (orden)
+        if (checkpointIndex != nextCheckpointIndex)
         {
-            currentCheckpointIndex++;
-            Debug.Log($"[RaceManager] Checkpoint correcto. Índice ahora: {currentCheckpointIndex}");
+            if (debugLogs)
+                Debug.Log($"[RaceManager] Checkpoint fuera de orden. Esperado: {nextCheckpointIndex}, llegó: {checkpointIndex}");
+            return;
+        }
 
-            // Si pasó por todos los checkpoints, espera línea de meta
-            if (currentCheckpointIndex >= checkpoints.Count)
-            {
-                currentCheckpointIndex = 0;
+        nextCheckpointIndex++;
+
+        if (debugLogs)
+            Debug.Log($"[RaceManager] Checkpoint correcto. Próximo índice: {nextCheckpointIndex}");
+
+        // Si completó todos los checkpoints, queda habilitada la meta (si la querés estricta)
+        if (nextCheckpointIndex >= totalCheckpoints)
+        {
+            if (debugLogs)
                 Debug.Log("[RaceManager] Todos los checkpoints completados, esperando meta...");
-            }
-        }
-        else
-        {
-            Debug.Log("[RaceManager] Checkpoint fuera de orden, no se avanza.");
         }
     }
 
+    // Llamalo desde el trigger de meta
     public void OnPlayerHitFinishLine()
     {
-        // Solo cuenta vuelta si venía del último checkpoint
-        if (currentCheckpointIndex == 0)
+        if (raceFinished) return;
+
+        if (requireAllCheckpointsBeforeFinish && nextCheckpointIndex < totalCheckpoints)
         {
+            if (debugLogs)
+                Debug.Log($"[RaceManager] Meta ignorada: faltan checkpoints ({nextCheckpointIndex}/{totalCheckpoints}).");
+            return;
+        }
+
+        // Vuelta completada
+        if (debugLogs)
             Debug.Log($"[RaceManager] Vuelta {currentLap} completada.");
 
-            currentLap++;
-
-            if (currentLap > totalLaps)
-            {
-                Debug.Log("[RaceManager] Carrera terminada. ¡Ganaste!");
-                // Acá después disparamos pantalla de fin, etc.
-            }
+        if (currentLap >= totalLaps)
+        {
+            raceFinished = true;
+            if (debugLogs)
+                Debug.Log($"[RaceManager] Carrera finalizada. Tiempo: {raceTime:0.00}s");
+            return;
         }
+
+        currentLap++;
+        nextCheckpointIndex = 0; // reinicia el circuito de checkpoints para la próxima vuelta
     }
 }

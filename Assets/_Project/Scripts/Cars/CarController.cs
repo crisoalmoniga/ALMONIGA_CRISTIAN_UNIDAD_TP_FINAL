@@ -30,7 +30,7 @@ public class CarController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         rb.centerOfMass = new Vector3(0, -0.5f, 0);
 
-        Debug.Log("[CarController] Start() – Rigidbody encontrado en " + gameObject.name);
+        //Debug.Log("[CarController] Start() – Rigidbody encontrado en " + gameObject.name);
     }
 
     void FixedUpdate()
@@ -39,7 +39,7 @@ public class CarController : MonoBehaviour
         ApplyStabilization();
 
         // Velocidad actual para debug
-        Debug.Log("[CarController] Velocidad actual: " + rb.linearVelocity.magnitude.ToString("F2"));
+        //Debug.Log("[CarController] Velocidad actual: " + rb.linearVelocity.magnitude.ToString("F2"));
     }
 
     private void HandleMovement()
@@ -47,7 +47,7 @@ public class CarController : MonoBehaviour
         float forward = Input.GetAxis("Vertical");
         float turn = Input.GetAxis("Horizontal");
 
-        Debug.Log($"[CarController] Input – Vertical: {forward:F2}, Horizontal: {turn:F2}");
+        //Debug.Log($"[CarController] Input – Vertical: {forward:F2}, Horizontal: {turn:F2}");
 
         // Si no hay input, no seguimos para no spamear fuerzas
         if (Mathf.Abs(forward) < 0.01f && Mathf.Abs(turn) < 0.01f)
@@ -61,7 +61,7 @@ public class CarController : MonoBehaviour
             if (rb.linearVelocity.magnitude < maxSpeed)
             {
                 rb.AddForce(transform.forward * forward * acceleration * Time.fixedDeltaTime, ForceMode.Acceleration);
-                Debug.Log("[CarController] Acelerando hacia adelante.");
+                //Debug.Log("[CarController] Acelerando hacia adelante.");
             }
         }
         else if (forward < 0f)
@@ -69,7 +69,7 @@ public class CarController : MonoBehaviour
             if (rb.linearVelocity.magnitude < maxReverseSpeed)
             {
                 rb.AddForce(transform.forward * forward * reverseAcceleration * Time.fixedDeltaTime, ForceMode.Acceleration);
-                Debug.Log("[CarController] Acelerando en reversa.");
+                //Debug.Log("[CarController] Acelerando en reversa.");
             }
         }
 
@@ -78,7 +78,7 @@ public class CarController : MonoBehaviour
         {
             float steerAmount = turn * turnSpeed * steerResponsiveness * Time.fixedDeltaTime;
             transform.Rotate(0f, steerAmount, 0f);
-            Debug.Log("[CarController] Girando: " + steerAmount.ToString("F2"));
+            //Debug.Log("[CarController] Girando: " + steerAmount.ToString("F2"));
         }
 
         // DRIFT / GRIP
@@ -97,12 +97,12 @@ public class CarController : MonoBehaviour
         if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, groundRayDistance, groundLayer))
         {
             rb.AddForce(-transform.up * downforce * Time.fixedDeltaTime, ForceMode.Acceleration);
-            Debug.Log("[CarController] Downforce aplicado. Hit en: " + hit.collider.name);
+            //Debug.Log("[CarController] Downforce aplicado. Hit en: " + hit.collider.name);
         }
         else
         {
             // Esto nos dice si nunca está detectando el suelo
-            Debug.Log("[CarController] Raycast al suelo NO está golpeando nada.");
+            //Debug.Log("[CarController] Raycast al suelo NO está golpeando nada.");
         }
     }
 }

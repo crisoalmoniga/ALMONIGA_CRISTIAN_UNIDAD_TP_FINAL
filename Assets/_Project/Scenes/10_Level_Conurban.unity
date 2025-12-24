@@ -246,10 +246,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c8f8e57e284d9f49bf1dadb3dfeb15f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CarController
-  acceleration: 1000
-  reverseAcceleration: 900
-  maxSpeed: 150
-  maxReverseSpeed: 50
+  acceleration: 2000
+  reverseAcceleration: 5000
+  maxSpeed: 300
+  maxReverseSpeed: 200
   turnSpeed: 80
   steerResponsiveness: 0.8
   grip: 8

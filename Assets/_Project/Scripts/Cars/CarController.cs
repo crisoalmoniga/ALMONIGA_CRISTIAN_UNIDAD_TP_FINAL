@@ -182,11 +182,17 @@ public class CarController : MonoBehaviour
     void ApplyLateralGrip()
     {
         Vector3 localVel = transform.InverseTransformDirection(rb.linearVelocity);
-        float grip = handbrake ? handbrakeGrip : lateralGrip;
+
+        float baseGrip = handbrake ? handbrakeGrip : lateralGrip;
+
+        // Si estoy acelerando, doy un poquito menos de "freno lateral" para que no se clave al rozar paredes
+        float accel01 = Mathf.Clamp01(Mathf.Abs(throttle));
+        float grip = Mathf.Lerp(baseGrip, Mathf.Min(1f, baseGrip + 0.05f), 1f - accel01);
 
         localVel.x *= grip;
         rb.linearVelocity = transform.TransformDirection(localVel);
     }
+
 
     void ApplyAutoLevel()
     {

@@ -5,60 +5,80 @@ public class CarController : MonoBehaviour
 {
     [Header("Referencias")]
     [Tooltip("Puntos desde donde se tiran los rayos al suelo (ideal: 4 esquinas del auto).")]
+    [InspectorName("Puntos de Hover")]
     [SerializeField] private Transform[] hoverPoints;
 
     [Tooltip("Qué capas cuentan como suelo.")]
+    [InspectorName("Capas de Suelo")]
     [SerializeField] private LayerMask groundMask = ~0;
 
     [Header("Hover (Suspensión)")]
     [Tooltip("Altura objetivo sobre el suelo (metros).")]
+    [InspectorName("Altura Objetivo")]
     [SerializeField] private float hoverHeight = 1.2f;
 
     [Tooltip("Fuerza de la suspensión (más alto = más duro).")]
+    [InspectorName("Fuerza de Suspensión")]
     [SerializeField] private float hoverForce = 8000f;
 
     [Tooltip("Amortiguación vertical (más alto = menos rebote).")]
+    [InspectorName("Amortiguación Vertical")]
     [SerializeField] private float hoverDamp = 600f;
 
-    [Tooltip("Distancia máxima del rayo (debe ser > hoverHeight).")]
+    [Tooltip("Distancia máxima del rayo (debe ser mayor a la altura).")]
+    [InspectorName("Longitud del Rayo")]
     [SerializeField] private float rayLength = 3.0f;
 
     [Header("Movimiento")]
-    [Tooltip("Aceleración hacia adelante/atrás.")]
+    [Tooltip("Aceleración hacia adelante y atrás.")]
+    [InspectorName("Aceleración")]
     [SerializeField] private float acceleration = 30f;
 
-    [Tooltip("Velocidad máxima (m/s).")]
+    [Tooltip("Velocidad máxima del vehículo.")]
+    [InspectorName("Velocidad Máxima")]
     [SerializeField] private float maxSpeed = 25f;
 
     [Header("Giro")]
     [Tooltip("Torque base de giro (se escala con la velocidad).")]
+    [InspectorName("Torque de Giro")]
     [SerializeField] private float turnTorque = 180f;
 
-    [Tooltip("Velocidad (m/s) a la que alcanza el giro máximo.")]
+    [Tooltip("Velocidad a la que se alcanza el giro máximo.")]
+    [InspectorName("Velocidad para Giro Máx.")]
     [SerializeField] private float steerFullAtSpeed = 12f;
 
-    [Tooltip("Amortiguación del giro en Y (anti trompo). Más alto = menos trompo.")]
+    [Tooltip("Amortiguación del giro en Y (anti trompo).")]
+    [InspectorName("Amortiguación de Trompo")]
     [SerializeField] private float yawDamping = 6f;
 
-    [Tooltip("Límite de velocidad angular (rad/s). Baja si sigue trompeando.")]
+    [Tooltip("Límite máximo de rotación en Y.")]
+    [InspectorName("Límite de Giro")]
     [SerializeField] private float maxYawRate = 3.5f;
 
     [Header("Agarre lateral")]
-    [Tooltip("Agarre lateral (1 = sin drift).")]
+    [Tooltip("Nivel de agarre lateral (1 = sin derrape).")]
+    [InspectorName("Agarre Lateral")]
     [Range(0f, 1f)]
     [SerializeField] private float lateralGrip = 0.92f;
 
     [Header("Freno de mano")]
-    [Tooltip("Agarre lateral con Space.")]
+    [Tooltip("Agarre lateral al usar freno de mano.")]
+    [InspectorName("Agarre con Freno")]
     [Range(0f, 1f)]
     [SerializeField] private float handbrakeGrip = 0.45f;
 
-    [Tooltip("Fuerza de frenado con Space.")]
+    [Tooltip("Fuerza de frenado del freno de mano.")]
+    [InspectorName("Fuerza de Frenado")]
     [SerializeField] private float handbrakeBrake = 20f;
 
     [Header("Estabilidad")]
+    [InspectorName("Auto Nivelar")]
     [SerializeField] private bool autoLevel = true;
+
+    [InspectorName("Fuerza de Nivelado")]
     [SerializeField] private float autoLevelStrength = 8f;
+
+    [InspectorName("Amortiguación de Nivelado")]
     [SerializeField] private float autoLevelDamp = 1.5f;
 
     private Rigidbody rb;
@@ -67,7 +87,7 @@ public class CarController : MonoBehaviour
     private float steer;
     private bool handbrake;
 
-    private float grounded01; // 0..1 qué tanto está “apoyado”
+    private float grounded01;
 
     void Awake()
     {
@@ -75,8 +95,7 @@ public class CarController : MonoBehaviour
         rb.interpolation = RigidbodyInterpolation.Interpolate;
         rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
 
-        // Ayuda mucho a evitar trompos “infinitos”
-        rb.angularDamping = 1.5f;   // si ya lo tocaste, dejalo parecido
+        rb.angularDamping = 1.5f;
         rb.linearDamping = 0.05f;
     }
 
@@ -89,9 +108,9 @@ public class CarController : MonoBehaviour
 
     void FixedUpdate()
     {
-        ApplyHover();        // setea grounded01
+        ApplyHover();
         ApplyDrive();
-        ApplySteer();        // ahora es anti-trompo
+        ApplySteer();
         ApplyLateralGrip();
 
         if (autoLevel)
@@ -112,7 +131,7 @@ public class CarController : MonoBehaviour
         {
             if (!p) continue;
 
-            if (Physics.Raycast(p.position, -transform.up, out RaycastHit hit, rayLength, groundMask, QueryTriggerInteraction.Ignore))
+            if (Physics.Raycast(p.position, -transform.up, out RaycastHit hit, rayLength, groundMask))
             {
                 hits++;
 
@@ -120,12 +139,11 @@ public class CarController : MonoBehaviour
                 float vel = Vector3.Dot(rb.GetPointVelocity(p.position), transform.up);
                 float force = (error * hoverForce) - (vel * hoverDamp);
 
-                rb.AddForceAtPosition(transform.up * force, p.position, ForceMode.Force);
+                rb.AddForceAtPosition(transform.up * force, p.position);
             }
             else
             {
-                // Si no toca suelo, empujoncito hacia abajo para no quedar “flotando” raro
-                rb.AddForceAtPosition(-transform.up * (hoverForce * 0.15f), p.position, ForceMode.Force);
+                rb.AddForceAtPosition(-transform.up * (hoverForce * 0.15f), p.position);
             }
         }
 
@@ -145,25 +163,20 @@ public class CarController : MonoBehaviour
 
     void ApplySteer()
     {
-        // 1) Giro escalado por velocidad (evita trompo a baja velocidad)
         float speed = rb.linearVelocity.magnitude;
         float steerStrength01 = Mathf.Clamp01(speed / Mathf.Max(0.01f, steerFullAtSpeed));
-
-        // 2) Solo girar realmente si está apoyado (si está en el aire, casi no)
-        float groundedFactor = grounded01;
-
-        float desiredTorque = steer * turnTorque * steerStrength01 * groundedFactor;
+        float desiredTorque = steer * turnTorque * steerStrength01 * grounded01;
 
         rb.AddTorque(transform.up * desiredTorque, ForceMode.Acceleration);
 
-        // 3) Anti-trompo: amortiguación del yaw (frena la rotación en Y)
         float yawRate = rb.angularVelocity.y;
         rb.AddTorque(transform.up * (-yawRate * yawDamping), ForceMode.Acceleration);
 
-        // 4) Clamp de yawRate (hard stop)
-        rb.angularVelocity = new Vector3(rb.angularVelocity.x,
-                                         Mathf.Clamp(rb.angularVelocity.y, -maxYawRate, maxYawRate),
-                                         rb.angularVelocity.z);
+        rb.angularVelocity = new Vector3(
+            rb.angularVelocity.x,
+            Mathf.Clamp(rb.angularVelocity.y, -maxYawRate, maxYawRate),
+            rb.angularVelocity.z
+        );
     }
 
     void ApplyLateralGrip()
@@ -186,17 +199,5 @@ public class CarController : MonoBehaviour
 
         Vector3 torque = axis * (angle * autoLevelStrength) - axis * (angVel * autoLevelDamp);
         rb.AddTorque(torque, ForceMode.Acceleration);
-    }
-
-    void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.cyan;
-        if (hoverPoints == null) return;
-
-        foreach (var p in hoverPoints)
-        {
-            if (!p) continue;
-            Gizmos.DrawLine(p.position, p.position - transform.up * rayLength);
-        }
     }
 }

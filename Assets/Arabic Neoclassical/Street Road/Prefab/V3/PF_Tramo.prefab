@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4464818215310655775}
   - component: {fileID: 4550429963477830844}
   m_Layer: 0
-  m_Name: V3_Road2Lane_Straight_06
+  m_Name: PF_Tramo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

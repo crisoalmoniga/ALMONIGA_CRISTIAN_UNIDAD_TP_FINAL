@@ -1,62 +1,37 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Collider))]
 public class CheckpointTrigger : MonoBehaviour
 {
-    public enum TriggerType { Checkpoint, FinishLine }
+    [SerializeField] private int index = 0;
+    [SerializeField] private bool debugLogs = false;
 
-    [Header("Type")]
-    [SerializeField] private TriggerType triggerType = TriggerType.Checkpoint;
-
-    [Header("Checkpoint Settings")]
-    [SerializeField] private int checkpointIndex = 0; // 0..N-1 (solo si es Checkpoint)
-
-    [Header("Debug")]
-    [SerializeField] private bool debugLogs = true;
+    public int Index => index;
 
     private RaceManager raceManager;
-    private bool consumed = false; // evita dobles triggers si el auto queda rozando
 
-    private void Start()
+    private void Reset()
+    {
+        GetComponent<Collider>().isTrigger = true;
+    }
+
+    private void Awake()
     {
         raceManager = FindFirstObjectByType<RaceManager>();
-
         if (raceManager == null)
-            Debug.LogError("[CheckpointTrigger] No se encontró RaceManager en la escena.");
+            Debug.LogError($"[CheckpointTrigger] No encontré RaceManager en escena. ({name})");
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (consumed) return;
         if (raceManager == null) return;
 
-        // Ajustá esto si tu Player tiene otro tag
-        if (!other.CompareTag("Player"))
-            return;
+        // Si querés tag en vez de referencia exacta, lo cambiamos.
+        if (!raceManager.IsPlayer(other)) return;
 
-        consumed = true;
+        if (debugLogs)
+            Debug.Log($"[CheckpointTrigger] Hit index {index} ({name})");
 
-        if (triggerType == TriggerType.Checkpoint)
-        {
-            if (debugLogs)
-                Debug.Log($"[CheckpointTrigger] Player entró al checkpoint {checkpointIndex}");
-
-            raceManager.OnPlayerHitCheckpoint(checkpointIndex);
-        }
-        else // FinishLine
-        {
-            if (debugLogs)
-                Debug.Log("[CheckpointTrigger] Player entró a la meta");
-
-            raceManager.OnPlayerHitFinishLine();
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (!other.CompareTag("Player"))
-            return;
-
-        // cuando sale, lo habilitamos para la próxima vuelta
-        consumed = false;
+        raceManager.NotifyCheckpointHit(index);
     }
 }

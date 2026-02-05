@@ -2,18 +2,32 @@
 
 public class CheckpointTrigger : MonoBehaviour
 {
-    [SerializeField] private int index;
+    [SerializeField] private int checkpointIndex;
+
+    private bool alreadyTriggered = false;
 
     private void OnTriggerEnter(Collider other)
     {
+        // 🔒 Evita spam
+        if (alreadyTriggered) return;
+
+        // 🎯 Filtrado fuerte
+        if (!other.CompareTag("RacerTrigger")) return;
+
+        // Confirmamos root
+        Transform root = other.transform.root;
+
         Debug.Log(
-            $"[CheckpointTrigger] CHECKPOINT {index} | Entró: {other.name} | Layer: {LayerMask.LayerToName(other.gameObject.layer)} | Root: {other.transform.root.name}"
+            $"[CheckpointTrigger] ✅ CHECKPOINT {checkpointIndex} | " +
+            $"Entró: {other.name} | Root: {root.name}"
         );
 
-        // Debug específico: ¿es el player?
-        if (other.transform.root.name == "Reno_12")
-        {
-            Debug.Log($"[CheckpointTrigger] ✅ PLAYER pasó por checkpoint {index}");
-        }
+        alreadyTriggered = true;
+    }
+
+    // (opcional) para debug
+    public void ResetCheckpoint()
+    {
+        alreadyTriggered = false;
     }
 }

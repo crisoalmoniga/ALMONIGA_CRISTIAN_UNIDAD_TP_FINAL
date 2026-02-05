@@ -1,32 +1,16 @@
-using UnityEngine;
+﻿using UnityEngine;
 
-[RequireComponent(typeof(Collider))]
 public class FinishLineTrigger : MonoBehaviour
 {
-    [SerializeField] private bool debugLogs = false;
-
-    private RaceManager raceManager;
-
-    private void Reset()
-    {
-        GetComponent<Collider>().isTrigger = true;
-    }
-
-    private void Awake()
-    {
-        raceManager = FindFirstObjectByType<RaceManager>();
-        if (raceManager == null)
-            Debug.LogError($"[FinishLineTrigger] No encontr� RaceManager en escena. ({name})");
-    }
-
     private void OnTriggerEnter(Collider other)
     {
-        if (raceManager == null) return;
-        if (!raceManager.IsPlayer(other)) return;
+        Debug.Log(
+            $"[FinishLineTrigger] ENTRÓ ALGO | Nombre: {other.name} | Layer: {LayerMask.LayerToName(other.gameObject.layer)} | Root: {other.transform.root.name}"
+        );
 
-        if (debugLogs)
-            Debug.Log($"[FinishLineTrigger] Hit ({name})");
-
-        raceManager.NotifyFinishLineHit();
+        if (other.transform.root.name == "Reno_12")
+        {
+            Debug.Log("[FinishLineTrigger] 🏁 PLAYER cruzó la META");
+        }
     }
 }

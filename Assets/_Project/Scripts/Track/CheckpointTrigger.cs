@@ -1,37 +1,19 @@
-using UnityEngine;
+﻿using UnityEngine;
 
-[RequireComponent(typeof(Collider))]
 public class CheckpointTrigger : MonoBehaviour
 {
-    [SerializeField] private int index = 0;
-    [SerializeField] private bool debugLogs = false;
-
-    public int Index => index;
-
-    private RaceManager raceManager;
-
-    private void Reset()
-    {
-        GetComponent<Collider>().isTrigger = true;
-    }
-
-    private void Awake()
-    {
-        raceManager = FindFirstObjectByType<RaceManager>();
-        if (raceManager == null)
-            Debug.LogError($"[CheckpointTrigger] No encontr� RaceManager en escena. ({name})");
-    }
+    [SerializeField] private int index;
 
     private void OnTriggerEnter(Collider other)
     {
-        if (raceManager == null) return;
+        Debug.Log(
+            $"[CheckpointTrigger] CHECKPOINT {index} | Entró: {other.name} | Layer: {LayerMask.LayerToName(other.gameObject.layer)} | Root: {other.transform.root.name}"
+        );
 
-        // Si quer�s tag en vez de referencia exacta, lo cambiamos.
-        if (!raceManager.IsPlayer(other)) return;
-
-        if (debugLogs)
-            Debug.Log($"[CheckpointTrigger] Hit index {index} ({name})");
-
-        raceManager.NotifyCheckpointHit(index);
+        // Debug específico: ¿es el player?
+        if (other.transform.root.name == "Reno_12")
+        {
+            Debug.Log($"[CheckpointTrigger] ✅ PLAYER pasó por checkpoint {index}");
+        }
     }
 }

@@ -16,10 +16,10 @@ TagManager:
   - Barrier
   - groundMask
   - FlechasBloom
-  - 
-  - 
-  - 
-  - 
+  - Ignore Colliders
+  - Racer
+  - Player
+  - FinishLine
   - 
   - 
   - 

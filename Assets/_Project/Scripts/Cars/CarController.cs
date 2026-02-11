@@ -3,207 +3,182 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class CarController : MonoBehaviour
 {
-    [Header("Referencias")]
-    [Tooltip("Puntos desde donde se tiran los rayos al suelo (ideal: 4 esquinas del auto).")]
-    [InspectorName("Puntos de Hover")]
-    [SerializeField] private Transform[] hoverPoints;
-
-    [Tooltip("Qué capas cuentan como suelo.")]
-    [InspectorName("Capas de Suelo")]
-    [SerializeField] private LayerMask groundMask = ~0;
-
-    [Header("Hover (Suspensión)")]
-    [Tooltip("Altura objetivo sobre el suelo (metros).")]
-    [InspectorName("Altura Objetivo")]
-    [SerializeField] private float hoverHeight = 1.2f;
-
-    [Tooltip("Fuerza de la suspensión (más alto = más duro).")]
-    [InspectorName("Fuerza de Suspensión")]
-    [SerializeField] private float hoverForce = 8000f;
-
-    [Tooltip("Amortiguación vertical (más alto = menos rebote).")]
-    [InspectorName("Amortiguación Vertical")]
-    [SerializeField] private float hoverDamp = 600f;
-
-    [Tooltip("Distancia máxima del rayo (debe ser mayor a la altura).")]
-    [InspectorName("Longitud del Rayo")]
-    [SerializeField] private float rayLength = 3.0f;
-
     [Header("Movimiento")]
-    [Tooltip("Aceleración hacia adelante y atrás.")]
-    [InspectorName("Aceleración")]
-    [SerializeField] private float acceleration = 30f;
+    [SerializeField] private float aceleracion = 35f;
+    [SerializeField] private float velocidadMaximaAdelante = 50f;
+    [SerializeField] private float velocidadMaximaReversa = 20f;
+    [SerializeField] private float fuerzaFreno = 60f;
 
-    [Tooltip("Velocidad máxima del vehículo.")]
-    [InspectorName("Velocidad Máxima")]
-    [SerializeField] private float maxSpeed = 25f;
+    [Header("Direccion")]
+    [SerializeField] private float velocidadGiro = 120f;
+    [SerializeField] private float velocidadMinimaParaGirar = 0.5f;
 
-    [Header("Giro")]
-    [Tooltip("Torque base de giro (se escala con la velocidad).")]
-    [InspectorName("Torque de Giro")]
-    [SerializeField] private float turnTorque = 180f;
+    [Header("Suspension")]
+    [SerializeField] private float distanciaSuspension = 1.2f;
+    [SerializeField] private float fuerzaSuspension = 8000f;
+    [SerializeField] private float amortiguacionSuspension = 800f;
+    [SerializeField] private LayerMask capaSuelo;
 
-    [Tooltip("Velocidad a la que se alcanza el giro máximo.")]
-    [InspectorName("Velocidad para Giro Máx.")]
-    [SerializeField] private float steerFullAtSpeed = 12f;
-
-    [Tooltip("Amortiguación del giro en Y (anti trompo).")]
-    [InspectorName("Amortiguación de Trompo")]
-    [SerializeField] private float yawDamping = 6f;
-
-    [Tooltip("Límite máximo de rotación en Y.")]
-    [InspectorName("Límite de Giro")]
-    [SerializeField] private float maxYawRate = 3.5f;
-
-    [Header("Agarre lateral")]
-    [Tooltip("Nivel de agarre lateral (1 = sin derrape).")]
-    [InspectorName("Agarre Lateral")]
-    [Range(0f, 1f)]
-    [SerializeField] private float lateralGrip = 0.92f;
-
-    [Header("Freno de mano")]
-    [Tooltip("Agarre lateral al usar freno de mano.")]
-    [InspectorName("Agarre con Freno")]
-    [Range(0f, 1f)]
-    [SerializeField] private float handbrakeGrip = 0.45f;
-
-    [Tooltip("Fuerza de frenado del freno de mano.")]
-    [InspectorName("Fuerza de Frenado")]
-    [SerializeField] private float handbrakeBrake = 20f;
-
-    [Header("Estabilidad")]
-    [InspectorName("Auto Nivelar")]
-    [SerializeField] private bool autoLevel = true;
-
-    [InspectorName("Fuerza de Nivelado")]
-    [SerializeField] private float autoLevelStrength = 8f;
-
-    [InspectorName("Amortiguación de Nivelado")]
-    [SerializeField] private float autoLevelDamp = 1.5f;
+    [Header("Presion al suelo")]
+    [SerializeField] private float fuerzaDescendente = 40f;
 
     private Rigidbody rb;
 
-    private float throttle;
-    private float steer;
-    private bool handbrake;
-
-    private float grounded01;
-
-    void Awake()
+    void Start()
     {
         rb = GetComponent<Rigidbody>();
-        rb.interpolation = RigidbodyInterpolation.Interpolate;
-        rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
 
-        rb.angularDamping = 1.5f;
-        rb.linearDamping = 0.05f;
-    }
-
-    void Update()
-    {
-        throttle = Input.GetAxis("Vertical");
-        steer = Input.GetAxis("Horizontal");
-        handbrake = Input.GetKey(KeyCode.Space);
+        rb.useGravity = true;
+        rb.mass = 1200f;
+        rb.linearDamping = 0f;
+        rb.angularDamping = 2.5f;
+        rb.centerOfMass = new Vector3(0f, -0.5f, 0f);
     }
 
     void FixedUpdate()
     {
-        ApplyHover();
-        ApplyDrive();
-        ApplySteer();
-        ApplyLateralGrip();
-
-        if (autoLevel)
-            ApplyAutoLevel();
+        ProcesarInput();
+        AplicarSuspension();
+        AplicarFuerzaDescendente();
+        LimitarVelocidad();
     }
 
-    void ApplyHover()
+    void ProcesarInput()
     {
-        if (hoverPoints == null || hoverPoints.Length == 0)
+        float aceleracionInput = 0f;
+
+        if (Input.GetKey(KeyCode.W))
+            aceleracionInput = 1f;
+
+        if (Input.GetKey(KeyCode.S))
+            aceleracionInput = -1f;
+
+        bool frenando = Input.GetKey(KeyCode.Space);
+
+        float direccionInput = 0f;
+
+        if (Input.GetKey(KeyCode.A))
+            direccionInput = -1f;
+
+        if (Input.GetKey(KeyCode.D))
+            direccionInput = 1f;
+
+        Mover(aceleracionInput, frenando);
+        Girar(direccionInput);
+    }
+
+    void Mover(float aceleracionInput, bool frenando)
+    {
+        Vector3 velocidadAdelante =
+            Vector3.Project(rb.linearVelocity, transform.forward);
+
+        float magnitudVelocidad = velocidadAdelante.magnitude;
+        float direccionMovimiento =
+            Mathf.Sign(Vector3.Dot(rb.linearVelocity, transform.forward));
+
+        // Adelante
+        if (aceleracionInput > 0f &&
+            magnitudVelocidad < velocidadMaximaAdelante)
         {
-            grounded01 = 0f;
-            return;
+            rb.AddForce(transform.forward * aceleracion, ForceMode.Acceleration);
         }
 
-        int hits = 0;
-
-        foreach (var p in hoverPoints)
+        // Reversa
+        if (aceleracionInput < 0f &&
+            magnitudVelocidad < velocidadMaximaReversa)
         {
-            if (!p) continue;
-
-            if (Physics.Raycast(p.position, -transform.up, out RaycastHit hit, rayLength, groundMask))
-            {
-                hits++;
-
-                float error = hoverHeight - hit.distance;
-                float vel = Vector3.Dot(rb.GetPointVelocity(p.position), transform.up);
-                float force = (error * hoverForce) - (vel * hoverDamp);
-
-                rb.AddForceAtPosition(transform.up * force, p.position);
-            }
-            else
-            {
-                rb.AddForceAtPosition(-transform.up * (hoverForce * 0.15f), p.position);
-            }
+            rb.AddForce(-transform.forward * aceleracion * 0.7f,
+                        ForceMode.Acceleration);
         }
 
-        grounded01 = Mathf.Clamp01((float)hits / hoverPoints.Length);
+        // Freno
+        if (frenando)
+        {
+            rb.AddForce(-rb.linearVelocity.normalized * fuerzaFreno,
+                        ForceMode.Acceleration);
+        }
     }
 
-    void ApplyDrive()
+    void Girar(float direccionInput)
     {
-        float forwardSpeed = Vector3.Dot(rb.linearVelocity, transform.forward);
+        float velocidad = rb.linearVelocity.magnitude;
+        if (velocidad < velocidadMinimaParaGirar) return;
 
-        if (Mathf.Abs(forwardSpeed) < maxSpeed)
-            rb.AddForce(transform.forward * (throttle * acceleration) * grounded01, ForceMode.Acceleration);
+        float direccionMovimiento =
+            Mathf.Sign(Vector3.Dot(rb.linearVelocity, transform.forward));
 
-        if (handbrake)
-            rb.AddForce(-rb.linearVelocity * handbrakeBrake, ForceMode.Acceleration);
-    }
+        float direccionFinal = direccionInput * direccionMovimiento;
 
-    void ApplySteer()
-    {
-        float speed = rb.linearVelocity.magnitude;
-        float steerStrength01 = Mathf.Clamp01(speed / Mathf.Max(0.01f, steerFullAtSpeed));
-        float desiredTorque = steer * turnTorque * steerStrength01 * grounded01;
+        float giro = direccionFinal *
+                     velocidadGiro *
+                     Time.fixedDeltaTime;
 
-        rb.AddTorque(transform.up * desiredTorque, ForceMode.Acceleration);
-
-        float yawRate = rb.angularVelocity.y;
-        rb.AddTorque(transform.up * (-yawRate * yawDamping), ForceMode.Acceleration);
-
-        rb.angularVelocity = new Vector3(
-            rb.angularVelocity.x,
-            Mathf.Clamp(rb.angularVelocity.y, -maxYawRate, maxYawRate),
-            rb.angularVelocity.z
+        rb.MoveRotation(
+            rb.rotation * Quaternion.Euler(0f, giro, 0f)
         );
     }
 
-    void ApplyLateralGrip()
+    void AplicarSuspension()
     {
-        Vector3 localVel = transform.InverseTransformDirection(rb.linearVelocity);
+        RaycastHit impacto;
 
-        float baseGrip = handbrake ? handbrakeGrip : lateralGrip;
+        if (Physics.Raycast(transform.position,
+                            Vector3.down,
+                            out impacto,
+                            distanciaSuspension,
+                            capaSuelo))
+        {
+            float compresion = distanciaSuspension - impacto.distance;
 
-        // Si estoy acelerando, doy un poquito menos de "freno lateral" para que no se clave al rozar paredes
-        float accel01 = Mathf.Clamp01(Mathf.Abs(throttle));
-        float grip = Mathf.Lerp(baseGrip, Mathf.Min(1f, baseGrip + 0.05f), 1f - accel01);
+            float fuerzaResorte =
+                compresion * fuerzaSuspension;
 
-        localVel.x *= grip;
-        rb.linearVelocity = transform.TransformDirection(localVel);
+            float fuerzaAmortiguador =
+                Vector3.Dot(rb.linearVelocity, Vector3.down) *
+                amortiguacionSuspension;
+
+            rb.AddForce(Vector3.up *
+                        (fuerzaResorte - fuerzaAmortiguador),
+                        ForceMode.Force);
+        }
     }
 
-
-    void ApplyAutoLevel()
+    void AplicarFuerzaDescendente()
     {
-        Vector3 axis = Vector3.Cross(transform.up, Vector3.up);
-        float angle = axis.magnitude;
-        if (angle < 0.001f) return;
+        float velocidad = rb.linearVelocity.magnitude;
 
-        axis.Normalize();
-        float angVel = Vector3.Dot(rb.angularVelocity, axis);
+        rb.AddForce(Vector3.down *
+                    fuerzaDescendente *
+                    velocidad,
+                    ForceMode.Force);
+    }
 
-        Vector3 torque = axis * (angle * autoLevelStrength) - axis * (angVel * autoLevelDamp);
-        rb.AddTorque(torque, ForceMode.Acceleration);
+    void LimitarVelocidad()
+    {
+        Vector3 velocidadAdelante =
+            Vector3.Project(rb.linearVelocity, transform.forward);
+
+        float magnitudVelocidad = velocidadAdelante.magnitude;
+
+        if (Vector3.Dot(rb.linearVelocity, transform.forward) > 0 &&
+            magnitudVelocidad > velocidadMaximaAdelante)
+        {
+            rb.linearVelocity =
+                transform.forward * velocidadMaximaAdelante;
+        }
+
+        if (Vector3.Dot(rb.linearVelocity, transform.forward) < 0 &&
+            magnitudVelocidad > velocidadMaximaReversa)
+        {
+            rb.linearVelocity =
+                -transform.forward * velocidadMaximaReversa;
+        }
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawLine(transform.position,
+                        transform.position + Vector3.down * distanciaSuspension);
     }
 }

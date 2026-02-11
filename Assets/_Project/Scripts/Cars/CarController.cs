@@ -22,6 +22,9 @@ public class CarController : MonoBehaviour
     [Header("Presion al suelo")]
     [SerializeField] private float fuerzaDescendente = 40f;
 
+    [Header("Estabilidad")]
+    [SerializeField] private float fuerzaAntiVuelco = 6000f;
+
     private Rigidbody rb;
 
     void Start()
@@ -41,6 +44,8 @@ public class CarController : MonoBehaviour
         AplicarSuspension();
         AplicarFuerzaDescendente();
         LimitarVelocidad();
+        AplicarAntiVuelco();
+
     }
 
     void ProcesarInput()
@@ -174,6 +179,18 @@ public class CarController : MonoBehaviour
                 -transform.forward * velocidadMaximaReversa;
         }
     }
+    void AplicarAntiVuelco()
+    {
+        // Cuánto está inclinado lateralmente el auto
+        float inclinacion = Vector3.Dot(transform.right, Vector3.up);
+
+        // Aplicamos torque contrario a la inclinación
+        rb.AddTorque(
+            -transform.forward * inclinacion * fuerzaAntiVuelco,
+            ForceMode.Force
+        );
+    }
+
 
     void OnDrawGizmosSelected()
     {

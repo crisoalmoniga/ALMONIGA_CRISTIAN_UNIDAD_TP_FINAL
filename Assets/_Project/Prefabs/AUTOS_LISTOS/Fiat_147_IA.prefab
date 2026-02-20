@@ -1104,7 +1104,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8720227675141549004}
   - component: {fileID: 6766819124942001338}
-  - component: {fileID: 4495602095752454658}
   m_Layer: 0
   m_Name: Fiat_147_IA
   m_TagString: Untagged
@@ -1167,51 +1166,6 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 1
---- !u!114 &4495602095752454658
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1347939671694065006}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d9460b23ca51bf047a97cc591caa2664, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CarControllerAI
-  waypointsRoot: {fileID: 0}
-  waypointsManual: []
-  waypointRadius: 6
-  lookAhead: 12
-  aiLevel: 0.5
-  aggressiveness: 1
-  handbrakeAngle: 55
-  handbrakeMinSpeed: 10
-  collisionSpinDamp: 0.6
-  collisionSideDamp: 0.55
-  collisionCooldown: 0.25
-  centerOfMassY: -0.5
-  hoverPoints: []
-  groundMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  hoverHeight: 1.2
-  hoverForce: 8000
-  hoverDamp: 600
-  rayLength: 3
-  acceleration: 30
-  maxSpeed: 25
-  turnTorque: 180
-  steerFullAtSpeed: 12
-  yawDamping: 6
-  maxYawRate: 3.5
-  lateralGrip: 0.92
-  handbrakeGrip: 0.45
-  handbrakeBrake: 20
-  autoLevel: 1
-  autoLevelStrength: 8
-  autoLevelDamp: 1.5
-  debugLogs: 0
 --- !u!1 &1353062257383531118
 GameObject:
   m_ObjectHideFlags: 0

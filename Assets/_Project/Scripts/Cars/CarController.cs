@@ -40,33 +40,36 @@ public class CarController : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (!PuedeMoverse())
+            return;
+
         ProcesarInput();
         AplicarSuspension();
         AplicarFuerzaDescendente();
         LimitarVelocidad();
         AplicarAntiVuelco();
+    }
 
+    private bool PuedeMoverse()
+    {
+        return RaceManager.Instance != null &&
+               RaceManager.Instance.estadoActual ==
+               RaceManager.EstadoCarrera.EnCarrera;
     }
 
     void ProcesarInput()
     {
         float aceleracionInput = 0f;
 
-        if (Input.GetKey(KeyCode.W))
-            aceleracionInput = 1f;
-
-        if (Input.GetKey(KeyCode.S))
-            aceleracionInput = -1f;
+        if (Input.GetKey(KeyCode.W)) aceleracionInput = 1f;
+        if (Input.GetKey(KeyCode.S)) aceleracionInput = -1f;
 
         bool frenando = Input.GetKey(KeyCode.Space);
 
         float direccionInput = 0f;
 
-        if (Input.GetKey(KeyCode.A))
-            direccionInput = -1f;
-
-        if (Input.GetKey(KeyCode.D))
-            direccionInput = 1f;
+        if (Input.GetKey(KeyCode.A)) direccionInput = -1f;
+        if (Input.GetKey(KeyCode.D)) direccionInput = 1f;
 
         Mover(aceleracionInput, frenando);
         Girar(direccionInput);
@@ -78,17 +81,13 @@ public class CarController : MonoBehaviour
             Vector3.Project(rb.linearVelocity, transform.forward);
 
         float magnitudVelocidad = velocidadAdelante.magnitude;
-        float direccionMovimiento =
-            Mathf.Sign(Vector3.Dot(rb.linearVelocity, transform.forward));
 
-        // Adelante
         if (aceleracionInput > 0f &&
             magnitudVelocidad < velocidadMaximaAdelante)
         {
             rb.AddForce(transform.forward * aceleracion, ForceMode.Acceleration);
         }
 
-        // Reversa
         if (aceleracionInput < 0f &&
             magnitudVelocidad < velocidadMaximaReversa)
         {
@@ -96,8 +95,7 @@ public class CarController : MonoBehaviour
                         ForceMode.Acceleration);
         }
 
-        // Freno
-        if (frenando)
+        if (frenando && rb.linearVelocity.magnitude > 0.1f)
         {
             rb.AddForce(-rb.linearVelocity.normalized * fuerzaFreno,
                         ForceMode.Acceleration);
@@ -179,23 +177,14 @@ public class CarController : MonoBehaviour
                 -transform.forward * velocidadMaximaReversa;
         }
     }
+
     void AplicarAntiVuelco()
     {
-        // Cuánto está inclinado lateralmente el auto
         float inclinacion = Vector3.Dot(transform.right, Vector3.up);
 
-        // Aplicamos torque contrario a la inclinación
         rb.AddTorque(
             -transform.forward * inclinacion * fuerzaAntiVuelco,
             ForceMode.Force
         );
-    }
-
-
-    void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawLine(transform.position,
-                        transform.position + Vector3.down * distanciaSuspension);
     }
 }

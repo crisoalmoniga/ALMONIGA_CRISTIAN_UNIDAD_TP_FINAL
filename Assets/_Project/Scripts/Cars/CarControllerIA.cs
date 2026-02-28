@@ -12,7 +12,7 @@ public class CarControllerIA : MonoBehaviour
     [SerializeField] private float lookAheadMax = 22f;
 
     [Header("IA - Direccion")]
-    [SerializeField] private float anguloMaxParaSteer = 45f; // grados -> steer = angulo/esto
+    [SerializeField] private float anguloMaxParaSteer = 45f;
 
     [Header("IA - Curvas / velocidad")]
     [SerializeField] private float anguloCurvaFuerte = 45f;
@@ -69,8 +69,13 @@ public class CarControllerIA : MonoBehaviour
 
     void FixedUpdate()
     {
-        ProcesarIA();
+        if (!PuedeMoverse())
+        {
+            FrenarCompletamente();
+            return;
+        }
 
+        ProcesarIA();
         Mover();
         Girar();
 
@@ -78,6 +83,19 @@ public class CarControllerIA : MonoBehaviour
         AplicarFuerzaDescendente();
         LimitarVelocidad();
         AplicarAntiVuelco();
+    }
+
+    private bool PuedeMoverse()
+    {
+        return RaceManager.Instance != null &&
+               RaceManager.Instance.estadoActual ==
+               RaceManager.EstadoCarrera.EnCarrera;
+    }
+
+    private void FrenarCompletamente()
+    {
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
     }
 
     void ProcesarIA()
@@ -90,7 +108,6 @@ public class CarControllerIA : MonoBehaviour
             return;
         }
 
-        // Maniobra de desatasco (reversa + giro alternado)
         if (tiempoManiobra > 0f)
         {
             tiempoManiobra -= Time.fixedDeltaTime;
@@ -100,22 +117,16 @@ public class CarControllerIA : MonoBehaviour
             return;
         }
 
-        // Asegurar indice válido
         if (indiceRuta < 0) indiceRuta = 0;
         if (indiceRuta >= puntosRuta.Length) indiceRuta = 0;
 
-        // Si llegamos al waypoint actual, avanzamos
         float distActual = Vector3.Distance(transform.position, puntosRuta[indiceRuta].position);
         if (distActual <= distanciaCambioPunto)
             indiceRuta = (indiceRuta + 1) % puntosRuta.Length;
 
-        // Elegimos objetivo look-ahead (evita orbitar un punto cercano)
         Transform objetivo = ElegirObjetivoLookAhead();
-
         Vector3 local = transform.InverseTransformPoint(objetivo.position);
 
-        // Si el objetivo quedó detrás (pasa en curvas cerradas o waypoints mal espaciados),
-        // forzamos avanzar índice para no quedarnos girando.
         if (local.z < 0f)
         {
             indiceRuta = (indiceRuta + 1) % puntosRuta.Length;
@@ -123,35 +134,26 @@ public class CarControllerIA : MonoBehaviour
             local = transform.InverseTransformPoint(objetivo.position);
         }
 
-        // Steering por ángulo (más estable que x/dist)
         float angulo = Mathf.Atan2(local.x, Mathf.Max(0.001f, local.z)) * Mathf.Rad2Deg;
         direccionInput = Mathf.Clamp(angulo / Mathf.Max(1f, anguloMaxParaSteer), -1f, 1f);
 
-        // Control de velocidad por curva
         float absAng = Mathf.Abs(angulo);
         float factorCurva = Mathf.InverseLerp(0f, anguloCurvaFuerte, absAng);
 
         float vel = rb.linearVelocity.magnitude;
         float velObjetivo = Mathf.Lerp(velocidadMaximaAdelante, velocidadObjetivoEnCurvaFuerte, factorCurva);
 
-        // Acelera o frena según objetivo
         frenando = vel > velObjetivo + 0.5f;
 
         if (frenando)
-        {
             aceleracionInput = 0f;
-        }
         else
-        {
-            // En curvas afloja un poco
             aceleracionInput = Mathf.Lerp(1f, 0.35f, factorCurva);
-        }
 
-        // Anti “giro en el lugar”: si estoy muy lento y el ángulo es grande, no clavamos steer al palo
         if (vel < 2f && absAng > 50f)
         {
             direccionInput *= 0.5f;
-            aceleracionInput = Mathf.Max(aceleracionInput, 0.35f); // empuja para salir
+            aceleracionInput = Mathf.Max(aceleracionInput, 0.35f);
         }
 
         DetectarAtasco(distActual);
@@ -162,7 +164,6 @@ public class CarControllerIA : MonoBehaviour
         float v = rb.linearVelocity.magnitude;
         float lookAhead = Mathf.Lerp(lookAheadMin, lookAheadMax, Mathf.Clamp01(v / 25f));
 
-        // buscamos el primer punto cuya distancia sea >= lookAhead
         int idx = indiceRuta;
         Vector3 pos = transform.position;
 
@@ -205,15 +206,12 @@ public class CarControllerIA : MonoBehaviour
         Vector3 velocidadAdelante = Vector3.Project(rb.linearVelocity, transform.forward);
         float magnitud = velocidadAdelante.magnitude;
 
-        // Adelante
         if (aceleracionInput > 0f && magnitud < velocidadMaximaAdelante)
             rb.AddForce(transform.forward * aceleracion, ForceMode.Acceleration);
 
-        // Reversa (solo usada por maniobra)
         if (aceleracionInput < 0f && magnitud < velocidadMaximaReversa)
             rb.AddForce(-transform.forward * aceleracion * 0.7f, ForceMode.Acceleration);
 
-        // Freno
         if (frenando && rb.linearVelocity.sqrMagnitude > 0.01f)
             rb.AddForce(-rb.linearVelocity.normalized * fuerzaFreno, ForceMode.Acceleration);
     }
@@ -258,11 +256,9 @@ public class CarControllerIA : MonoBehaviour
         Vector3 velAdelante = Vector3.Project(rb.linearVelocity, transform.forward);
         float magnitud = velAdelante.magnitude;
 
-        // adelante
         if (Vector3.Dot(rb.linearVelocity, transform.forward) > 0f && magnitud > velocidadMaximaAdelante)
             rb.linearVelocity = transform.forward * velocidadMaximaAdelante;
 
-        // reversa
         if (Vector3.Dot(rb.linearVelocity, transform.forward) < 0f && magnitud > velocidadMaximaReversa)
             rb.linearVelocity = -transform.forward * velocidadMaximaReversa;
     }
@@ -275,24 +271,5 @@ public class CarControllerIA : MonoBehaviour
             -transform.forward * inclinacion * fuerzaAntiVuelco,
             ForceMode.Force
         );
-    }
-
-    void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawLine(transform.position, transform.position + Vector3.down * distanciaSuspension);
-
-        if (puntosRuta != null && puntosRuta.Length > 0)
-        {
-            Gizmos.color = Color.cyan;
-            for (int i = 0; i < puntosRuta.Length; i++)
-            {
-                if (!puntosRuta[i]) continue;
-                Gizmos.DrawSphere(puntosRuta[i].position, 0.5f);
-
-                Transform next = puntosRuta[(i + 1) % puntosRuta.Length];
-                if (next) Gizmos.DrawLine(puntosRuta[i].position, next.position);
-            }
-        }
     }
 }

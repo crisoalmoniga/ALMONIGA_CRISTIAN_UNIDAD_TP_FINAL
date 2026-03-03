@@ -9,7 +9,7 @@ public class WaypointTracker : MonoBehaviour
 
     private void Start()
     {
-        // 🔥 Se registra automáticamente en el RaceManager
+        // Se registra automáticamente en el RaceManager
         RaceManager.Instance.RegistrarCorredor(this);
     }
 
@@ -28,7 +28,7 @@ public class WaypointTracker : MonoBehaviour
             return;
         }
 
-        // Si estamos en el último y volvemos al 0 → vuelta
+        // Si esta en el último y volvemos al 0 → vuelta
         if (waypointActual == totalWaypoints - 1 && wp.indice == 0)
         {
             vueltaActual++;

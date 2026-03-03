@@ -88,10 +88,10 @@ public class RaceManager : MonoBehaviour
             {
                 estadoActual = EstadoCarrera.Finalizada;
 
-                // Guardamos el ganador
+                // Guarda el ganador
                 RaceData.nombreGanador = corredor.name;
 
-                // Cargamos escena Results directamente
+                // Carga escena Results directamente
                 SceneManager.LoadScene("20_Results");
 
                 break;

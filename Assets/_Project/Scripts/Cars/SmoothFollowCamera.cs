@@ -9,10 +9,10 @@ public class SmoothFollowCamera : MonoBehaviour
     [SerializeField] private Vector3 offset = new Vector3(0f, 2.2f, -6f);
 
     [Header("Smoothness")]
-    [Tooltip("Más bajo = más delay (más suave).")]
+    [Tooltip("Mï¿½s bajo = mï¿½s delay (mï¿½s suave).")]
     [SerializeField] private float positionSmoothTime = 0.08f;
 
-    [Tooltip("Qué tan rápido acompaña la rotación. Más bajo = más delay.")]
+    [Tooltip("Quï¿½ tan rï¿½pido acompaï¿½a la rotaciï¿½n. Mï¿½s bajo = mï¿½s delay.")]
     [SerializeField] private float rotationLerpSpeed = 8f;
 
     [Header("Look")]
@@ -25,11 +25,11 @@ public class SmoothFollowCamera : MonoBehaviour
     {
         if (!target) return;
 
-        // POSICIÓN suavizada (tipo resorte suave)
+        // POSICIï¿½N suavizada (tipo resorte suave)
         Vector3 desiredPos = target.TransformPoint(offset);
         transform.position = Vector3.SmoothDamp(transform.position, desiredPos, ref velocity, positionSmoothTime);
 
-        // ROTACIÓN suavizada (delay leve al doblar)
+        // ROTACIï¿½N suavizada (delay leve al doblar)
         Vector3 lookPoint = target.position + Vector3.up * lookHeight;
         Quaternion desiredRot = Quaternion.LookRotation(lookPoint - transform.position, Vector3.up);
         transform.rotation = Quaternion.Slerp(transform.rotation, desiredRot, 1f - Mathf.Exp(-rotationLerpSpeed * Time.deltaTime));

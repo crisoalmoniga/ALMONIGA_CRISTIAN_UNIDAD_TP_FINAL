@@ -1,15 +1,17 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class BootManager : MonoBehaviour
 {
-    private void Start()
+    void Start()
     {
-        CargarMenu();
+        StartCoroutine(CargarMenu());
     }
 
-    private void CargarMenu()
+    IEnumerator CargarMenu()
     {
+        yield return new WaitForSeconds(4f); // duración del boot
         SceneManager.LoadScene("01_Menu");
     }
 }

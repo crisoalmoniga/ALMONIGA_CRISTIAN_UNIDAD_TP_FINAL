@@ -48,6 +48,8 @@ public class CarController : MonoBehaviour
         AplicarFuerzaDescendente();
         LimitarVelocidad();
         AplicarAntiVuelco();
+
+        ActualizarHUDVelocidad();
     }
 
     private bool PuedeMoverse()
@@ -186,5 +188,14 @@ public class CarController : MonoBehaviour
             -transform.forward * inclinacion * fuerzaAntiVuelco,
             ForceMode.Force
         );
+    }
+
+    void ActualizarHUDVelocidad()
+    {
+        if (!CompareTag("Player")) return;
+
+        float velocidadKmh = rb.linearVelocity.magnitude * 3.6f;
+
+        HUDManager.Instance.ActualizarVelocidad(velocidadKmh);
     }
 }

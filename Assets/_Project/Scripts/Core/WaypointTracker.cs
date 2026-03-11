@@ -5,11 +5,13 @@ public class WaypointTracker : MonoBehaviour
     public int waypointActual = -1;
     public int vueltaActual = 0;
 
+    [Header("Configuración pista")]
     [SerializeField] private int totalWaypoints = 9;
+    [SerializeField] private int vueltasTotales = 3;
 
     private void Start()
     {
-        // Se registra automáticamente en el RaceManager
+        // Registrar este corredor en el RaceManager
         RaceManager.Instance.RegistrarCorredor(this);
     }
 
@@ -20,27 +22,40 @@ public class WaypointTracker : MonoBehaviour
 
         int siguienteWaypoint = waypointActual + 1;
 
-        // Inicio de carrera
+        // Inicio de carrera (primer waypoint)
         if (waypointActual == -1 && wp.indice == 0)
         {
             waypointActual = 0;
+
+            if (CompareTag("Player"))
+            {
+                HUDManager.Instance.ActualizarVuelta(1, vueltasTotales);
+            }
+
             Debug.Log("Inicio de carrera");
             return;
         }
 
-        // Si esta en el último y volvemos al 0 → vuelta
+        // Si estaba en el último waypoint y vuelve al 0 → nueva vuelta
         if (waypointActual == totalWaypoints - 1 && wp.indice == 0)
         {
             vueltaActual++;
             waypointActual = 0;
+
+            if (CompareTag("Player"))
+            {
+                HUDManager.Instance.ActualizarVuelta(vueltaActual, vueltasTotales);
+            }
+
             Debug.Log("VUELTA COMPLETADA: " + vueltaActual);
             return;
         }
 
-        // Waypoint siguiente normal
+        // Waypoint siguiente correcto
         if (wp.indice == siguienteWaypoint)
         {
             waypointActual = wp.indice;
+
             Debug.Log("Waypoint válido: " + waypointActual);
         }
     }

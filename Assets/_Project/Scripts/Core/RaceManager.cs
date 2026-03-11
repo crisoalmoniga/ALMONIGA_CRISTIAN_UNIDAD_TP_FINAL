@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class RaceManager : MonoBehaviour
 {
@@ -22,7 +23,15 @@ public class RaceManager : MonoBehaviour
 
     [Header("Configuración Carrera")]
     [SerializeField] private int vueltasParaGanar = 3;
-    [SerializeField] private float tiempoCuentaRegresiva = 3f;
+
+    [Header("Cuenta Regresiva UI")]
+    [SerializeField] private Image imagenCuentaRegresiva;
+    [SerializeField] private Sprite[] spritesCuenta;
+
+    [Header("Animación Countdown")]
+    [SerializeField] private float escalaInicial = 2f;
+    [SerializeField] private float escalaFinal = 0.30f;
+    [SerializeField] private float duracionAnimacion = 0.25f;
 
     private void Awake()
     {
@@ -58,18 +67,43 @@ public class RaceManager : MonoBehaviour
     {
         estadoActual = EstadoCarrera.CuentaRegresiva;
 
-        float tiempoRestante = tiempoCuentaRegresiva;
-
-        while (tiempoRestante > 0)
+        for (int i = 0; i < spritesCuenta.Length; i++)
         {
-            Debug.Log(Mathf.Ceil(tiempoRestante));
-            yield return new WaitForSeconds(1f);
-            tiempoRestante--;
+            imagenCuentaRegresiva.sprite = spritesCuenta[i];
+            imagenCuentaRegresiva.gameObject.SetActive(true);
+
+            yield return StartCoroutine(AnimarNumero());
+
+            yield return new WaitForSeconds(0.7f);
         }
 
-        Debug.Log("GO!");
+        imagenCuentaRegresiva.gameObject.SetActive(false);
 
         estadoActual = EstadoCarrera.EnCarrera;
+    }
+
+    private IEnumerator AnimarNumero()
+    {
+        RectTransform rect = imagenCuentaRegresiva.rectTransform;
+
+        float tiempo = 0f;
+
+        rect.localScale = Vector3.one * escalaInicial;
+
+        while (tiempo < duracionAnimacion)
+        {
+            tiempo += Time.deltaTime;
+
+            float t = tiempo / duracionAnimacion;
+
+            float escala = Mathf.Lerp(escalaInicial, escalaFinal, t);
+
+            rect.localScale = Vector3.one * escala;
+
+            yield return null;
+        }
+
+        rect.localScale = Vector3.one * escalaFinal;
     }
 
     private void CalcularPosiciones()
@@ -78,6 +112,14 @@ public class RaceManager : MonoBehaviour
             .OrderByDescending(c => c.vueltaActual)
             .ThenByDescending(c => c.waypointActual)
             .ToList();
+
+        for (int i = 0; i < corredores.Count; i++)
+        {
+            if (corredores[i].CompareTag("Player"))
+            {
+                HUDManager.Instance.ActualizarPosicion(i + 1, corredores.Count);
+            }
+        }
     }
 
     private void VerificarVictoria()
@@ -88,10 +130,8 @@ public class RaceManager : MonoBehaviour
             {
                 estadoActual = EstadoCarrera.Finalizada;
 
-                // Guarda el ganador
                 RaceData.nombreGanador = corredor.name;
 
-                // Carga escena Results directamente
                 SceneManager.LoadScene("20_Results");
 
                 break;

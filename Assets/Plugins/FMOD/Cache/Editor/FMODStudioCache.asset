@@ -54,6 +54,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 0
+--- !u!114 &-7116860119475944578
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/SFX_Button_Select
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/SFX_Button_Select
+  Guid:
+    Data1: 2093268037
+    Data2: 1242329815
+    Data3: -1915061315
+    Data4: -1123490115
+  Banks:
+  - {fileID: 4341944044127667270}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 451
 --- !u!114 &-1527203323693474456
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -102,13 +129,15 @@ MonoBehaviour:
   - {fileID: -1527203323693474456}
   - {fileID: -8163484098684154068}
   - {fileID: 5457954522672133383}
+  - {fileID: -7116860119475944578}
+  - {fileID: 8290912669414869274}
   EditorParameters: []
   MasterBanks:
   - {fileID: 4341944044127667270}
   StringsBanks:
   - {fileID: 8719878394410853487}
   cacheVersion: 131858
-  cacheTime: 639082556654959643
+  cacheTime: 639094443950872230
   SerializableEventsDict:
   - key: event:/Menu
     index: 0
@@ -120,6 +149,10 @@ MonoBehaviour:
     index: 3
   - key: event:/Gameplay
     index: 4
+  - key: event:/SFX_Button_Select
+    index: 5
+  - key: event:/SFX_Button
+    index: 6
 --- !u!114 &3208543749610492103
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -162,10 +195,10 @@ MonoBehaviour:
   Path: ../ALMONIGA_CRISTIAN_UNIDAD_TP_FINAL_FMOD/ALMONIGA_CRISTIAN_UNIDAD_TP_FINAL/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 639082556654951370
+  lastModified: 639094443950862175
   FileSizes:
   - Name: Desktop
-    Value: 4044416
+    Value: 4053952
   Exists: 1
 --- !u!114 &5457954522672133383
 MonoBehaviour:
@@ -194,6 +227,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 148658
+--- !u!114 &8290912669414869274
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/SFX_Button
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/SFX_Button
+  Guid:
+    Data1: -536700839
+    Data2: 1338594823
+    Data3: 286710426
+    Data4: 406612220
+  Banks:
+  - {fileID: 4341944044127667270}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 249
 --- !u!114 &8719878394410853487
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -209,8 +269,8 @@ MonoBehaviour:
   Path: ../ALMONIGA_CRISTIAN_UNIDAD_TP_FINAL_FMOD/ALMONIGA_CRISTIAN_UNIDAD_TP_FINAL/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 639082556654959643
+  lastModified: 639094443950872230
   FileSizes:
   - Name: Desktop
-    Value: 924
+    Value: 1014
   Exists: 1

@@ -671,6 +671,7 @@ GameObject:
   - component: {fileID: 262227289}
   - component: {fileID: 262227288}
   - component: {fileID: 262227287}
+  - component: {fileID: 262227290}
   m_Layer: 5
   m_Name: Btn_Jugar
   m_TagString: Untagged
@@ -780,6 +781,36 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 262227285}
   m_CullTransparentMesh: 1
+--- !u!114 &262227290
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 262227285}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfc62700358311449aba8e79448d055e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
+  hoverSound:
+    Guid:
+      Data1: -536700839
+      Data2: 1338594823
+      Data3: 286710426
+      Data4: 406612220
+    Path: event:/SFX_Button
+  clickSound:
+    Guid:
+      Data1: 2093268037
+      Data2: 1242329815
+      Data3: -1915061315
+      Data4: -1123490115
+    Path: event:/SFX_Button_Select
+  normalScale: 2
+  hoverScale: 2.2
+  clickScale: 2.5
+  speed: 10
 --- !u!1 &295146715
 GameObject:
   m_ObjectHideFlags: 0
@@ -1232,6 +1263,7 @@ GameObject:
   - component: {fileID: 977610471}
   - component: {fileID: 977610470}
   - component: {fileID: 977610469}
+  - component: {fileID: 977610472}
   m_Layer: 5
   m_Name: Btn_Salir
   m_TagString: Untagged
@@ -1341,6 +1373,36 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 977610467}
   m_CullTransparentMesh: 1
+--- !u!114 &977610472
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 977610467}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfc62700358311449aba8e79448d055e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
+  hoverSound:
+    Guid:
+      Data1: -536700839
+      Data2: 1338594823
+      Data3: 286710426
+      Data4: 406612220
+    Path: event:/SFX_Button
+  clickSound:
+    Guid:
+      Data1: 2093268037
+      Data2: 1242329815
+      Data3: -1915061315
+      Data4: -1123490115
+    Path: event:/SFX_Button_Select
+  normalScale: 2
+  hoverScale: 2.2
+  clickScale: 2.5
+  speed: 10
 --- !u!1 &1233039036
 GameObject:
   m_ObjectHideFlags: 0

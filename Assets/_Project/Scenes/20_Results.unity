@@ -371,6 +371,7 @@ GameObject:
   - component: {fileID: 472675843}
   - component: {fileID: 472675842}
   - component: {fileID: 472675844}
+  - component: {fileID: 472675845}
   m_Layer: 5
   m_Name: Btn_Revancha
   m_TagString: Untagged
@@ -480,6 +481,32 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &472675845
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 472675840}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfc62700358311449aba8e79448d055e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
+  hoverSound:
+    Guid:
+      Data1: -536700839
+      Data2: 1338594823
+      Data3: 286710426
+      Data4: 406612220
+    Path: event:/SFX_Button
+  clickSound:
+    Guid:
+      Data1: 2093268037
+      Data2: 1242329815
+      Data3: -1915061315
+      Data4: -1123490115
+    Path: event:/SFX_Button_Select
 --- !u!1 &676556165
 GameObject:
   m_ObjectHideFlags: 0
@@ -1429,6 +1456,7 @@ GameObject:
   - component: {fileID: 1691070839}
   - component: {fileID: 1691070838}
   - component: {fileID: 1691070837}
+  - component: {fileID: 1691070841}
   m_Layer: 5
   m_Name: Btn_Menu
   m_TagString: Untagged
@@ -1538,6 +1566,32 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: -119.8}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1691070841
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1691070836}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfc62700358311449aba8e79448d055e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
+  hoverSound:
+    Guid:
+      Data1: -536700839
+      Data2: 1338594823
+      Data3: 286710426
+      Data4: 406612220
+    Path: event:/SFX_Button
+  clickSound:
+    Guid:
+      Data1: 2093268037
+      Data2: 1242329815
+      Data3: -1915061315
+      Data4: -1123490115
+    Path: event:/SFX_Button_Select
 --- !u!1 &1798370071
 GameObject:
   m_ObjectHideFlags: 0
@@ -1550,6 +1604,7 @@ GameObject:
   - component: {fileID: 1798370074}
   - component: {fileID: 1798370073}
   - component: {fileID: 1798370072}
+  - component: {fileID: 1798370076}
   m_Layer: 5
   m_Name: Btn_Salir
   m_TagString: Untagged
@@ -1659,6 +1714,32 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: -220.75}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1798370076
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1798370071}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfc62700358311449aba8e79448d055e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
+  hoverSound:
+    Guid:
+      Data1: -536700839
+      Data2: 1338594823
+      Data3: 286710426
+      Data4: 406612220
+    Path: event:/SFX_Button
+  clickSound:
+    Guid:
+      Data1: 2093268037
+      Data2: 1242329815
+      Data3: -1915061315
+      Data4: -1123490115
+    Path: event:/SFX_Button_Select
 --- !u!1 &1837812412
 GameObject:
   m_ObjectHideFlags: 0

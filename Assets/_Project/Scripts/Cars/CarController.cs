@@ -27,6 +27,8 @@ public class CarController : MonoBehaviour
 
     private Rigidbody rb;
 
+    private float aceleracionInput = 0f;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -61,7 +63,7 @@ public class CarController : MonoBehaviour
 
     void ProcesarInput()
     {
-        float aceleracionInput = 0f;
+        aceleracionInput = 0f;
 
         if (Input.GetKey(KeyCode.W)) aceleracionInput = 1f;
         if (Input.GetKey(KeyCode.S)) aceleracionInput = -1f;

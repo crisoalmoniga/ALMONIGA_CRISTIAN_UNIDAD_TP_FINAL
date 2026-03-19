@@ -1,5 +1,32 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8241830578978835537
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/SFX_Go
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/SFX_Go
+  Guid:
+    Data1: -134518872
+    Data2: 1091839491
+    Data3: -2003623240
+    Data4: -2069210658
+  Banks:
+  - {fileID: 4341944044127667270}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 498
 --- !u!114 &-8163484098684154068
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -81,6 +108,30 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 451
+--- !u!114 &-4116984183512580421
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/SFX_Engine/RPM
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: RPM
+  StudioPath: 
+  Min: 1000
+  Max: 7000
+  Default: 1224.5322
+  ID:
+    data1: 2125531304
+    data2: 491097303
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &-1527203323693474456
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -108,6 +159,59 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 6380
+--- !u!114 &-411811257745649882
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/SFX_Engine
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/SFX_Engine
+  Guid:
+    Data1: 1849589639
+    Data2: 1194533443
+    Data3: -709992016
+    Data4: 204541839
+  Banks:
+  - {fileID: 4341944044127667270}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 0
+  Parameters:
+  - {fileID: -4116984183512580421}
+  - {fileID: -395872365037258890}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 0
+--- !u!114 &-395872365037258890
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/SFX_Engine/Load
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Load
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 2784774592
+    data2: 1602713407
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -131,13 +235,16 @@ MonoBehaviour:
   - {fileID: 5457954522672133383}
   - {fileID: -7116860119475944578}
   - {fileID: 8290912669414869274}
+  - {fileID: 1738404337737407318}
+  - {fileID: -8241830578978835537}
+  - {fileID: -411811257745649882}
   EditorParameters: []
   MasterBanks:
   - {fileID: 4341944044127667270}
   StringsBanks:
   - {fileID: 8719878394410853487}
   cacheVersion: 131858
-  cacheTime: 639094443950872230
+  cacheTime: 639094647722443230
   SerializableEventsDict:
   - key: event:/Menu
     index: 0
@@ -153,6 +260,39 @@ MonoBehaviour:
     index: 5
   - key: event:/SFX_Button
     index: 6
+  - key: event:/SFX_Countdown
+    index: 7
+  - key: event:/SFX_Go
+    index: 8
+  - key: event:/SFX_Engine
+    index: 9
+--- !u!114 &1738404337737407318
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/SFX_Countdown
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/SFX_Countdown
+  Guid:
+    Data1: -1610374396
+    Data2: 1082624875
+    Data3: -1096686158
+    Data4: -2094565463
+  Banks:
+  - {fileID: 4341944044127667270}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 45
 --- !u!114 &3208543749610492103
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -195,10 +335,10 @@ MonoBehaviour:
   Path: ../ALMONIGA_CRISTIAN_UNIDAD_TP_FINAL_FMOD/ALMONIGA_CRISTIAN_UNIDAD_TP_FINAL/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 639094443950862175
+  lastModified: 639094647722443230
   FileSizes:
   - Name: Desktop
-    Value: 4053952
+    Value: 4142464
   Exists: 1
 --- !u!114 &5457954522672133383
 MonoBehaviour:
@@ -269,8 +409,8 @@ MonoBehaviour:
   Path: ../ALMONIGA_CRISTIAN_UNIDAD_TP_FINAL_FMOD/ALMONIGA_CRISTIAN_UNIDAD_TP_FINAL/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 639094443950872230
+  lastModified: 639094647722443230
   FileSizes:
   - Name: Desktop
-    Value: 1014
+    Value: 1228
   Exists: 1

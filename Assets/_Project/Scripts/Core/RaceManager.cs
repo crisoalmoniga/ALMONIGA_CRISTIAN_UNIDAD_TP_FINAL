@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Linq;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using FMODUnity; // 👈 agregado
 
 public class RaceManager : MonoBehaviour
 {
@@ -32,6 +33,10 @@ public class RaceManager : MonoBehaviour
     [SerializeField] private float escalaInicial = 2f;
     [SerializeField] private float escalaFinal = 0.30f;
     [SerializeField] private float duracionAnimacion = 0.25f;
+
+    [Header("Audio Countdown (FMOD)")] // 👈 agregado
+    [SerializeField] private EventReference sfxCountdown;
+    [SerializeField] private EventReference sfxGo;
 
     private void Awake()
     {
@@ -72,6 +77,12 @@ public class RaceManager : MonoBehaviour
             imagenCuentaRegresiva.sprite = spritesCuenta[i];
             imagenCuentaRegresiva.gameObject.SetActive(true);
 
+            // 🔊 SONIDO (agregado)
+            if (i < spritesCuenta.Length - 1)
+                RuntimeManager.PlayOneShot(sfxCountdown);
+            else
+                RuntimeManager.PlayOneShot(sfxGo);
+
             yield return StartCoroutine(AnimarNumero());
 
             yield return new WaitForSeconds(0.7f);
@@ -80,6 +91,8 @@ public class RaceManager : MonoBehaviour
         imagenCuentaRegresiva.gameObject.SetActive(false);
 
         estadoActual = EstadoCarrera.EnCarrera;
+
+        Debug.Log("Inicio de carrera"); // opcional pero útil
     }
 
     private IEnumerator AnimarNumero()
